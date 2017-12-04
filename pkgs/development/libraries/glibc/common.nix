@@ -19,9 +19,9 @@
 } @ args:
 
 let
-  version = "2.26";
-  patchSuffix = "-75";
-  sha256 = "1ggnj1hzjym7sn93rbwydcqd562q73lsb7g7kd199g6j9j9hlkp5";
+  version = "2.25";
+  patchSuffix = "-49";
+  sha256 = "067bd9bb3390e79aa45911537d13c3721f1d9d3769931a30c2681bfee66f23a0";
   cross = if buildPlatform != hostPlatform then hostPlatform else null;
 in
 
@@ -46,7 +46,8 @@ stdenv.mkDerivation ({
           glibc-2.25-49-gbc5ace67fe
           $ git show --reverse glibc-2.25..release/2.25/master | gzip -n -9 --rsyncable - > 2.25-49.patch.gz
       */
-      ./2.26-75.patch.gz
+       ./2.25-49.patch.gz
+#      ./2.26-75.patch.gz
 
       /* Have rpcgen(1) look for cpp(1) in $PATH.  */
       ./rpcgen-path.patch
