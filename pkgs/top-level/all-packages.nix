@@ -12495,7 +12495,8 @@ with pkgs;
   lkl = callPackage ../applications/virtualization/lkl { };
 
   linuxHeaders_4_4 = callPackage ../os-specific/linux/kernel-headers/4.4.nix { };
-  linuxHeaders = linuxHeaders_4_4;
+  linuxHeaders_3_14 = callPackage ../os-specific/linux/kernel-headers/3.14.nix { };
+  linuxHeaders = linuxHeaders_3_14;
 
   kernelPatches = callPackage ../os-specific/linux/kernel/patches.nix { };
 
