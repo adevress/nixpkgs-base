@@ -103,7 +103,7 @@ stdenv.mkDerivation ({
        then "--enable-profile"
        else "--disable-profile")
     ] ++ lib.optionals withLinuxHeaders [
-      "--enable-kernel=2.6.0" # for compat with 2.6 for RHEL6
+      "--enable-kernel=2.6.32" # for compat with 2.6 for RHEL6
     ] ++ lib.optionals (cross != null) [
       (if cross.withTLS then "--with-tls" else "--without-tls")
       (if cross ? float && cross.float == "soft" then "--without-fp" else "--with-fp")
