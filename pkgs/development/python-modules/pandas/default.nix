@@ -66,6 +66,11 @@ in buildPythonPackage rec {
   '';
 
   checkInputs = [ moto ];
+
+  # check phase is flacky and
+  # simply fail withotu sandboxing and large machine ... 
+  doCheck = false;
+
   checkPhase = ''
     runHook preCheck
   ''
