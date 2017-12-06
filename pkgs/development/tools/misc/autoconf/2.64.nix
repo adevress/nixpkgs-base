@@ -17,6 +17,12 @@ stdenv.mkDerivation rec {
   #doCheck = ((!stdenv.isCygwin) && (!stdenv.isSunOS));
   doCheck = false;
 
+  preConfigure = ''
+	export M4="${m4}/bin/m4"
+
+  '';
+
+
   # Don't fixup "#! /bin/sh" in Autoconf, otherwise it will use the
   # "fixed" path in generated files!
   dontPatchShebangs = true;
