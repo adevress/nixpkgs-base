@@ -44,7 +44,7 @@ let
   defaultVulkanDrivers =
     if (stdenv.isArm || stdenv.isAarch64)
     then []
-    else ["intel"] ++ lib.optional enableRadv "radeon";
+    else [ ] ++ lib.optional enableRadv "radeon";
 in
 
 let gallium_ = galliumDrivers; dri_ = driDrivers; vulkan_ = vulkanDrivers; in
