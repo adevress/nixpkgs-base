@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, cmake }:
+{ stdenv, fetchFromGitHub, cmake, sharedLibrary ? false }:
 
 stdenv.mkDerivation rec {
   name = "snappy-${version}";
@@ -15,12 +15,14 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ cmake ];
 
-  # -DNDEBUG for speed
-  configureFlags = [ "CXXFLAGS=-DNDEBUG" ];
+
+  cmakeFlags = [] 
+	++ (stdenv.lib.optionals) (sharedLibrary == true ) [ "-DBUILD_SHARED_LIBS=ON" ];
 
   # SIGILL on darwin
   doCheck = !stdenv.isDarwin;
   checkPhase = ''
+     export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH
     (cd .. && ./build/snappy_unittest)
   '';
 

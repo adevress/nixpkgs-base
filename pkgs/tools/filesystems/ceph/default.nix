@@ -1,7 +1,7 @@
 { callPackage, fetchgit, fetchpatch, ... } @ args:
 
 callPackage ./generic.nix (args // rec {
-  version = "9.2.0";
+  version = "12.2.2";
 
   src = fetchgit {
     url = "https://github.com/ceph/ceph.git";
