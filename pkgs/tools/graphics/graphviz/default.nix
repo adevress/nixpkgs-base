@@ -9,7 +9,7 @@ stdenv.mkDerivation rec {
   name = "graphviz-${version}";
 
   src = fetchurl {
-    url = "http://www.graphviz.org/pub/graphviz/ARCHIVE/${name}.tar.gz";
+    urls = [ "http://www.graphviz.org/pub/graphviz/ARCHIVE/${name}.tar.gz" "https://graphviz.gitlab.io/pub/graphviz/stable/SOURCES/graphviz.tar.gz" ];
     sha256 = "08d4ygkxz2f553bxj6087da56a23kx1khv0j8ycxa102vvx1hlna";
   };
 
