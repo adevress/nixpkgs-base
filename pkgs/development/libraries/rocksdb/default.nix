@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, fixDarwinDylibNames
+{ stdenv, fetchFromGitHub, fixDarwinDylibNames, which
 
 # Optional Arguments
 , snappy ? null, google-gflags ? null, zlib ? null, bzip2 ? null, lz4 ? null
@@ -15,16 +15,16 @@ let
 in
 stdenv.mkDerivation rec {
   name = "rocksdb-${version}";
-  version = "5.1.2";
+  version = "5.9.2";
 
   src = fetchFromGitHub {
     owner = "facebook";
     repo = "rocksdb";
     rev = "v${version}";
-    sha256 = "1smahz67gcd86nkdqaml78lci89dza131mlj5472r4sxjdxsx277";
+    sha256 = "1njzg5kgda1mbqp4fpdndb00fgdxqgl3vqwm387b8skkk0hjp0x5";
   };
 
-  buildInputs = [ snappy google-gflags zlib bzip2 lz4 malloc fixDarwinDylibNames ];
+  buildInputs = [ which snappy google-gflags zlib bzip2 lz4 malloc fixDarwinDylibNames ];
 
   postPatch = ''
     # Hack to fix typos
@@ -41,6 +41,7 @@ stdenv.mkDerivation rec {
   ${if enableLite then "CXXFLAGS" else null} = "-DROCKSDB_LITE=1";
 
   buildFlags = [
+    "USE_RTTI=1"
     "DEBUG_LEVEL=0"
     "shared_lib"
     "static_lib"
@@ -49,6 +50,7 @@ stdenv.mkDerivation rec {
   installFlags = [
     "INSTALL_PATH=\${out}"
     "DEBUG_LEVEL=0"
+    "USE_RTTI=1"
     "install-shared"
     "install-static"
   ];
