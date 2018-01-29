@@ -25,6 +25,8 @@ stdenv.mkDerivation rec {
   preConfigure = ''
     patchShebangs .
   '';
+  
+  propagatedBuildInputs = [ liburcu ];
 
   meta = with stdenv.lib; {
     description = "LTTng Userspace Tracer libraries";
