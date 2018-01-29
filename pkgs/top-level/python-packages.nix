@@ -131,6 +131,8 @@ in {
 
   setuptools = callPackage ../development/python-modules/setuptools { };
 
+  setuptools_pymod = toPythonModule (callPackage ../development/python-modules/setuptools { });
+
   vowpalwabbit = callPackage ../development/python-modules/vowpalwabbit {
     pythonPackages = self;
     boost = pkgs.boost160;
