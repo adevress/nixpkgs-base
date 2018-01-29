@@ -6,7 +6,7 @@ callPackage ./generic.nix (args // rec {
   src = fetchgit {
     url = "https://github.com/ceph/ceph.git";
     rev = "refs/tags/v${version}";
-    sha256 = "0a2v3bgkrbkzardcw7ymlhhyjlwi08qmcm7g34y2sjsxk9bd78an";
+    sha256 = "01anqxyffa8l2lzgyb0dj6fjicfjdx2cq9y1klh24x69gxwkdh00";
   };
 
   patches = [

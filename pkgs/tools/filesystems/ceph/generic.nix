@@ -1,9 +1,13 @@
-{ stdenv, ensureNewerSourcesHook, autoconf, automake, makeWrapper, pkgconfig
-, libtool, which, git
-, boost, python2Packages, libxml2, zlib
+{ stdenv, ensureNewerSourcesHook, cmake, pkgconfig
+, which, git
+, boost, python2Packages
+, libxml2, zlib
+, openldap, lttngUst
+, babeltrace, gperf
+, cunit
 
 # Optional Dependencies
-, snappy ? null, leveldb ? null, yasm ? null, fcgi ? null, expat ? null
+, snappy ? null, yasm ? null, fcgi ? null, expat ? null
 , curl ? null, fuse ? null, libibverbs ? null, librdmacm ? null
 , libedit ? null, libatomic_ops ? null, kinetic-cpp-client ? null
 , rocksdb ? null, libs3 ? null
@@ -30,21 +34,12 @@ assert cryptopp != null || (nss != null && nspr != null);
 with stdenv;
 with stdenv.lib;
 let
-  inherit (python2Packages) python;
-  mkFlag = trueStr: falseStr: cond: name: val: "--"
-    + (if cond then trueStr else falseStr)
-    + name
-    + optionalString (val != null && cond != false) "=${val}";
-  mkEnable = mkFlag "enable-" "disable-";
-  mkWith = mkFlag "with-" "without-";
-  mkOther = mkFlag "" "" true;
 
   shouldUsePkg = pkg_: let pkg = (builtins.tryEval pkg_).value;
     in if lib.any (x: x == system) (pkg.meta.platforms or [])
       then pkg else null;
 
   optSnappy = shouldUsePkg snappy;
-  optLeveldb = shouldUsePkg leveldb;
   optYasm = shouldUsePkg yasm;
   optFcgi = shouldUsePkg fcgi;
   optExpat = shouldUsePkg expat;
@@ -69,7 +64,7 @@ let
   optLibxfs = shouldUsePkg libxfs;
   optZfs = shouldUsePkg zfs;
 
-  hasServer = optSnappy != null && optLeveldb != null;
+  hasServer = optSnappy != null;
   hasMon = hasServer;
   hasMds = hasServer;
   hasOsd = hasServer;
@@ -93,34 +88,38 @@ let
     none = [ ];
   };
 
-  wrapArgs = "--set PYTHONPATH \"$(toPythonPath $lib)\""
-    + " --prefix PYTHONPATH : \"$(toPythonPath ${python2Packages.flask})\""
-    + " --set PATH \"$out/bin\"";
+  ceph-python-env = python2Packages.python.withPackages (ps: [ 
+	ps.sphinx
+	ps.flask
+	ps.argparse
+	ps.cython 
+	ps.setuptools_pymod
+	ps.pip
+	]);
+
 in
 stdenv.mkDerivation {
   name="ceph-${version}";
 
   inherit src;
 
-  patches = patches ++ [
-    ./0001-Makefile-env-Don-t-force-sbin.patch
+  patches = [ 
+    ./0001-kv-RocksDBStore-API-break-additional.patch   
   ];
 
   nativeBuildInputs = [
-    autoconf automake makeWrapper pkgconfig libtool which git
+    cmake
+    pkgconfig which git
     (ensureNewerSourcesHook { year = "1980"; })
-  ]
-    ++ optionals (versionAtLeast version "9.0.2") [
-      python2Packages.setuptools python2Packages.argparse
-    ];
+  ];
+  
   buildInputs = buildInputs ++ cryptoLibsMap.${cryptoStr} ++ [
-    boost python libxml2 optYasm optLibatomic_ops optLibs3 malloc python2Packages.flask zlib
-  ] ++ optionals (versionAtLeast version "9.0.0") [
-    python2Packages.sphinx # Used for docs
+    boost ceph-python-env libxml2 optYasm optLibatomic_ops optLibs3 
+    malloc zlib openldap lttngUst babeltrace gperf cunit
   ] ++ optionals stdenv.isLinux [
     linuxHeaders libuuid udev keyutils optLibaio optLibxfs optZfs
   ] ++ optionals hasServer [
-    optSnappy optLeveldb
+    optSnappy
   ] ++ optionals hasRadosgw [
     optFcgi optExpat optCurl optFuse optLibedit
   ] ++ optionals hasRocksdb [
@@ -128,145 +127,32 @@ stdenv.mkDerivation {
   ] ++ optionals hasKinetic [
     optKinetic-cpp-client
   ];
-
-  postPatch = ''
-    # Fix zfs pkgconfig detection
-    sed -i 's,\[zfs\],\[libzfs\],g' configure.ac
-
-    # Fix seagate kinetic linking
-    sed -i 's,libcrypto.a,-lcrypto,g' src/os/Makefile.am
-  '' + optionalString (versionAtLeast version "9.0.0") ''
-    # Fix gmock
-    patchShebangs src/gmock
+  
+  # rip off submodule that interfer with system libs
+  preConfigure =''
+	rm -rf src/boost
+	rm -rf src/rocksdb
+	
+	# require LD_LIBRARY_PATH for cython to find internal dep
+	export LD_LIBRARY_PATH="$PWD/build/lib:$LD_LIBRARY_PATH"
+	
+	# requires setuptools due to embedded in-cmake setup.py usage
+	export PYTHONPATH="${python2Packages.setuptools_pymod}/lib/python2.7/site-packages/:$PYTHONPATH"
   '';
 
-  preConfigure = ''
-    # Ceph expects the arch command to be usable during configure
-    # for detecting the assembly type
-    mkdir -p mybin
-    echo "#${stdenv.shell} -e" >> mybin/arch
-    echo "uname -m" >> mybin/arch
-    chmod +x mybin/arch
-    PATH="$PATH:$(pwd)/mybin"
-
-    ./autogen.sh
-
-    # Fix the python site-packages install directory
-    sed -i "s,\(PYTHON\(\|_EXEC\)_PREFIX=\).*,\1'$lib',g" configure
-
-    # Fix the PYTHONPATH for installing ceph-detect-init to $out
-    mkdir -p "$(toPythonPath $out)"
-    export PYTHONPATH="$(toPythonPath $out):$PYTHONPATH"
-  '';
-
-  configureFlags = [
-    (mkOther                               "exec_prefix"         "\${out}")
-    (mkOther                               "sysconfdir"          "/etc")
-    (mkOther                               "localstatedir"       "/var")
-    (mkOther                               "libdir"              "\${lib}/lib")
-    (mkOther                               "includedir"          "\${lib}/include")
-    (mkWith   true                         "rbd"                  null)
-    (mkWith   true                         "cephfs"               null)
-    (mkWith   hasRadosgw                   "radosgw"              null)
-    (mkWith   true                         "radosstriper"         null)
-    (mkWith   hasServer                    "mon"                  null)
-    (mkWith   hasServer                    "osd"                  null)
-    (mkWith   hasServer                    "mds"                  null)
-    (mkEnable true                         "client"               null)
-    (mkEnable hasServer                    "server"               null)
-    (mkWith   (cryptoStr == "cryptopp")    "cryptopp"             null)
-    (mkWith   (cryptoStr == "nss")         "nss"                  null)
-    (mkEnable false                        "root-make-check"      null)
-    (mkWith   false                        "profiler"             null)
-    (mkWith   false                        "debug"                null)
-    (mkEnable false                        "coverage"             null)
-    (mkWith   (optFuse != null)            "fuse"                 null)
-    (mkWith   (malloc == optJemalloc)      "jemalloc"             null)
-    (mkWith   (malloc == optGperftools)    "tcmalloc"             null)
-    (mkEnable false                        "pgrefdebugging"       null)
-    (mkEnable false                        "cephfs-java"          null)
-    (mkWith   (optLibatomic_ops != null)   "libatomic-ops"        null)
-    (mkWith   true                         "ocf"                  null)
-    (mkWith   hasKinetic                   "kinetic"              null)
-    (mkWith   hasRocksdb                   "librocksdb"           null)
-    (mkWith   false                        "librocksdb-static"    null)
-  ] ++ optional stdenv.isLinux [
-    (mkWith   (optLibaio != null)          "libaio"               null)
-    (mkWith   (optLibxfs != null)          "libxfs"               null)
-    (mkWith   (optZfs != null)             "libzfs"               null)
-  ] ++ optional (versionAtLeast version "0.94.3") [
-    (mkWith   false                        "tcmalloc-minimal"     null)
-  ] ++ optional (versionAtLeast version "9.0.1") [
-    (mkWith   false                        "valgrind"             null)
-  ] ++ optional (versionAtLeast version "9.0.2") [
-    (mkWith   true                         "man-pages"            null)
-    (mkWith   true                         "systemd-libexec-dir"  "\${out}/libexec")
-  ] ++ optional (versionOlder version "9.1.0") [
-    (mkWith   (optLibs3 != null)           "system-libs3"         null)
-    (mkWith   true                         "rest-bench"           null)
-  ] ++ optional (versionAtLeast version "9.1.0") [
-    (mkWith   true                         "rgw-user"             "rgw")
-    (mkWith   true                         "rgw-group"            "rgw")
-    (mkWith   true                         "systemd-unit-dir"     "\${out}/etc/systemd/system")
-    (mkWith   false                        "selinux"              null)  # TODO: Implement
+  cmakeFlags = [ 
+    "-DENABLE_GIT_VERSION=OFF"
+    "-DWITH_SYSTEM_BOOST=ON"
+    "-DWITH_SYSTEM_ROCKSDB=ON"
+    "-DWITH_LEVELDB=OFF"
+    
+    # enforce shared lib
+    "-DBUILD_SHARED_LIBS=ON"
+    
+    # disable cephfs, broken for now
+    "-DWITH_CEPHFS=OFF"
+    "-DWITH_LIBCEPHFS=OFF"
   ];
-
-  preBuild = optionalString (versionAtLeast version "9.0.0") ''
-    (cd src/gmock; make -j $NIX_BUILD_CORES)
-  '';
-
-  installFlags = [ "sysconfdir=\${out}/etc" ];
-
-  outputs = [ "out" "lib" ];
-
-  postInstall = ''
-    # Wrap all of the python scripts
-    wrapProgram $out/bin/ceph ${wrapArgs}
-    wrapProgram $out/bin/ceph-brag ${wrapArgs}
-    wrapProgram $out/bin/ceph-rest-api ${wrapArgs}
-    wrapProgram $out/sbin/ceph-create-keys ${wrapArgs}
-    wrapProgram $out/sbin/ceph-disk ${wrapArgs}
-
-    # Bring in lib as a run-time dependency
-    mkdir -p $out/nix-support
-    echo "$lib" > $out/nix-support/propagated-build-inputs
-
-    # Fix the python library loading
-    find $lib/lib -name \*.pyc -or -name \*.pyd -exec rm {} \;
-    for PY in $(find $lib/lib -name \*.py); do
-      LIBS="$(sed -n "s/.*find_library('\([^)]*\)').*/\1/p" "$PY")"
-
-      # Delete any calls to find_library
-      sed -i '/find_library/d' "$PY"
-
-      # Fix each find_library call
-      for LIB in $LIBS; do
-        REALLIB="$lib/lib/lib$LIB.so"
-        sed -i "s,\(lib$LIB = CDLL(\).*,\1'$REALLIB'),g" "$PY"
-      done
-
-      # Reapply compilation optimizations
-      NAME=$(basename -s .py "$PY")
-      rm -f "$PY"{c,o}
-      pushd "$(dirname $PY)"
-      python -c "import $NAME"
-      python -O -c "import $NAME"
-      popd
-      test -f "$PY"c
-      test -f "$PY"o
-    done
-
-    # Fix .la file link dependencies
-    find "$lib/lib" -name \*.la | xargs sed -i \
-      -e 's,-lboost_[a-z]*,-L${boost.out}/lib \0,g' \
-  '' + optionalString (cryptoStr == "cryptopp") ''
-      -e 's,-lcryptopp,-L${optCryptopp}/lib \0,g' \
-  '' + optionalString (cryptoStr == "nss") ''
-      -e 's,-l\(plds4\|plc4\|nspr4\),-L${optNss}/lib \0,g' \
-      -e 's,-l\(ssl3\|smime3\|nss3\|nssutil3\),-L${optNspr}/lib \0,g' \
-  '' + ''
-
-  '';
 
   enableParallelBuilding = true;
 
