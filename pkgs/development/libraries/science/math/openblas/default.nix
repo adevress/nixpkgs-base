@@ -44,8 +44,7 @@ let
       TARGET = "ATHLON";
       DYNAMIC_ARCH = "1";
       CC = "gcc";
-      USE_OPENMP = "0";
-      USE_THREAD= "0";
+      USE_OPENMP = "1";
     };
   };
 in
@@ -97,7 +96,7 @@ stdenv.mkDerivation {
     [
       "FC=gfortran"
       ''PREFIX="''$(out)"''
-      "NUM_THREADS=1"
+      "NUM_THREADS=64"
       "INTERFACE64=${if blas64 then "1" else "0"}"
       "NO_STATIC=1"
     ]
