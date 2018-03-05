@@ -47,6 +47,8 @@ buildPythonPackage rec {
     blas = numpy.blas;
   };
 
+  doCheck = false;
+
   setupPyBuildFlags = [ "--fcompiler='gnu95'" ];
 
   meta = {

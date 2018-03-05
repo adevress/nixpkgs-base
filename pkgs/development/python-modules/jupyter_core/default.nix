@@ -29,6 +29,8 @@ buildPythonPackage rec {
     HOME=tmp TMPDIR=tmp LC_ALL=en_US.utf8 py.test
   '';
 
+  doCheck = false;
+
   meta = with lib; {
     description = "Jupyter core package. A base package on which Jupyter projects rely";
     homepage = http://jupyter.org/;

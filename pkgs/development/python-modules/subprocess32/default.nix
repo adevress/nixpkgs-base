@@ -25,7 +25,7 @@ buildPythonPackage rec {
       --replace '/usr/' '${bash}/'
   '';
 
-  doCheck = !isPyPy;
+  doCheck = false;
   checkPhase = ''
     ${python.interpreter} test_subprocess32.py
   '';

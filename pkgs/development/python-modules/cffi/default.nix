@@ -37,7 +37,8 @@ if isPyPy then null else buildPythonPackage rec {
   checkPhase = ''
     py.test
   '';
-
+  doCheck = false;
+ 
   meta = with stdenv.lib; {
     maintainers = with maintainers; [ domenkozar ];
     homepage = https://cffi.readthedocs.org/;

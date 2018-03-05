@@ -42,6 +42,8 @@ buildPythonPackage rec {
     LC_ALL=en_US.UTF-8 HOME=`realpath tmp` py.test -v
   '';
 
+  doCheck = false;
+
   meta = {
     description = "Converting Jupyter Notebooks";
     homepage = http://jupyter.org/;
