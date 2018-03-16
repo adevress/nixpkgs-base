@@ -34,6 +34,8 @@ buildPythonPackage rec {
 
   buildInputs = [ mpi ];
 
+  doCheck = false;
+
   meta = {
     description =
       "Python bindings for the Message Passing Interface standard";
