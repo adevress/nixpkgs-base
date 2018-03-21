@@ -1,0 +1,51 @@
+diff -ur cmake-3.9.6/Modules/GNUInstallDirs.cmake cmake-3.9.6.new/Modules/GNUInstallDirs.cmake
+--- cmake-3.9.6/Modules/GNUInstallDirs.cmake	2017-11-10 13:28:57.000000000 +0100
++++ cmake-3.9.6.new/Modules/GNUInstallDirs.cmake	2018-03-21 10:44:49.406367924 +0100
+@@ -219,30 +219,7 @@
+   endif()
+   if(CMAKE_SYSTEM_NAME MATCHES "^(Linux|kFreeBSD|GNU)$"
+       AND NOT CMAKE_CROSSCOMPILING)
+-    if (EXISTS "/etc/debian_version") # is this a debian system ?
+-      if(CMAKE_LIBRARY_ARCHITECTURE)
+-        if("${CMAKE_INSTALL_PREFIX}" MATCHES "^/usr/?$")
+-          set(_LIBDIR_DEFAULT "lib/${CMAKE_LIBRARY_ARCHITECTURE}")
+-        endif()
+-        if(DEFINED _GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX
+-            AND "${_GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX}" MATCHES "^/usr/?$")
+-          set(__LAST_LIBDIR_DEFAULT "lib/${CMAKE_LIBRARY_ARCHITECTURE}")
+-        endif()
+-      endif()
+-    else() # not debian, rely on CMAKE_SIZEOF_VOID_P:
+-      if(NOT DEFINED CMAKE_SIZEOF_VOID_P)
+-        message(AUTHOR_WARNING
+-          "Unable to determine default CMAKE_INSTALL_LIBDIR directory because no target architecture is known. "
+-          "Please enable at least one language before including GNUInstallDirs.")
+-      else()
+-        if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+-          set(_LIBDIR_DEFAULT "lib64")
+-          if(DEFINED _GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX)
+-            set(__LAST_LIBDIR_DEFAULT "lib64")
+-          endif()
+-        endif()
+-      endif()
+-    endif()
++	# PATCH: we are in a Nix environment : NO lib64
+   endif()
+   if(NOT DEFINED CMAKE_INSTALL_LIBDIR)
+     set(CMAKE_INSTALL_LIBDIR "${_LIBDIR_DEFAULT}" CACHE PATH "Object code libraries (${_LIBDIR_DEFAULT})")
+diff -ur cmake-3.9.6/Modules/Platform/Linux.cmake cmake-3.9.6.new/Modules/Platform/Linux.cmake
+--- cmake-3.9.6/Modules/Platform/Linux.cmake	2017-11-10 13:28:57.000000000 +0100
++++ cmake-3.9.6.new/Modules/Platform/Linux.cmake	2018-03-21 11:09:02.230188384 +0100
+@@ -50,9 +50,6 @@
+ 
+ include(Platform/UnixPaths)
+ 
+-# Debian has lib32 and lib64 paths only for compatibility so they should not be
+-# searched.
+-if(NOT CMAKE_CROSSCOMPILING AND EXISTS "/etc/debian_version")
+-  set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB32_PATHS FALSE)
+-  set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS FALSE)
+-endif()
++# PATCH: We are in a Nix environment, never, over use lib64
++set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB32_PATHS FALSE)
++set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS FALSE)
