@@ -10127,6 +10127,8 @@ in {
 
   keyutils = callPackage ../development/python-modules/keyutils { };
 
+  kiwisolver = callPackage ../development/python-modules/kiwisolver { };
+
   klaus = buildPythonPackage rec {
     version = "0.9.1";
     name = "klaus-${version}";
