@@ -104,6 +104,7 @@ stdenv.mkDerivation {
     rm src/test/debuginfo/union-smoke.rs
     rm src/test/debuginfo/vec-slices.rs
     rm src/test/debuginfo/vec.rs
+    rm src/test/run-pass/env-home-dir.rs
 
     # Useful debugging parameter
     # export VERBOSE=1
@@ -116,8 +117,6 @@ stdenv.mkDerivation {
     # Disable tests that fail when sandboxing is enabled.
     substituteInPlace src/libstd/sys/unix/ext/net.rs \
         --replace '#[test]' '#[test] #[ignore]'
-    substituteInPlace src/test/run-pass/env-home-dir.rs \
-        --replace 'home_dir().is_some()' true
     rm -v src/test/run-pass/fds-are-cloexec.rs  # FIXME: pipes?
     rm -v src/test/run-pass/sync-send-in-std.rs  # FIXME: ???
   '';

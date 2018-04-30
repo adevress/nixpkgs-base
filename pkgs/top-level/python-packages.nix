@@ -9726,6 +9726,7 @@ in {
      };
 
      propagatedBuildInputs = with self; [ pytest ];
+     doCheck= false;
 
      meta = {
        homepage = https://github.com/jpvanhal/inflection;
