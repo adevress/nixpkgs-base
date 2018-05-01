@@ -7556,6 +7556,8 @@ with pkgs;
     inherit (darwin.apple_sdk.frameworks) CoreServices;
   };
 
+  buildBazelPackage = callPackage ../build-support/build-bazel-package { };
+
   premake = premake4;
 
   procodile = callPackage ../tools/system/procodile { };
