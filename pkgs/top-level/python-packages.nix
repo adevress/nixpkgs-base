@@ -19302,6 +19302,7 @@ in {
     };
 
     propagatedBuildInputs = with self; [ ptyprocess tornado ];
+    doCheck = false;
 
     meta = {
       description = "Terminals served to term.js using Tornado websockets";
