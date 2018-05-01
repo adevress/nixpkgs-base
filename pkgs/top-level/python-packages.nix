@@ -9725,7 +9725,8 @@ in {
        sha256 = "1jhnxgnw8y3mbzjssixh6qkc7a3afc4fygajhqrqalnilyvpzshq";
      };
 
-     disabled = isPy3k;
+     propagatedBuildInputs = with self; [ pytest ];
+     doCheck= false;
 
      meta = {
        homepage = https://github.com/jpvanhal/inflection;
@@ -21356,11 +21357,11 @@ EOF
 
 
   websocket_client = buildPythonPackage rec {
-    name = "websocket_client-0.40.0";
+    name = "websocket_client-0.47.0";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/w/websocket-client/${name}.tar.gz";
-      sha256 = "1yz67wdjijrvwpx0a0f6wdfy8ajsvr9xbj5514ld452fqnh19b20";
+      sha256 = "0jb1446053ryp5p25wsr1hjfdzwfm04a6f3pzpcb63bfz96xqlx4";
     };
 
     propagatedBuildInputs = with self; [ six backports_ssl_match_hostname unittest2 argparse ];
