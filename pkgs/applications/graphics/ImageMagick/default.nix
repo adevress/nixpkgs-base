@@ -14,8 +14,8 @@ let
     else throw "ImageMagick is not supported on this platform.";
 
   cfg = {
-    version = "6.9.9-23";
-    sha256 = "1ka2j1j3xv8n9ka817v5kiy1vin8k7pcfzb2cf8b81vr8a7b4mgc";
+    version = "7.0.7-29";
+    sha256 = "0jfpfydz50zxs776knz6w2f5g0l4nhivp9g1fz4cf5clgjcpa3z6";
     patches = [];
   }
     # Freeze version on mingw so we don't need to port the patch too often.
@@ -45,8 +45,6 @@ stdenv.mkDerivation rec {
 
   patches = [ ./imagetragick.patch ] ++ cfg.patches;
 
-  outputs = [ "out" "dev" "doc" ]; # bin/ isn't really big
-  outputMan = "out"; # it's tiny
 
   enableParallelBuilding = true;
 
@@ -79,14 +77,11 @@ stdenv.mkDerivation rec {
     ;
 
   postInstall = ''
-    (cd "$dev/include" && ln -s ImageMagick* ImageMagick)
-    moveToOutput "bin/*-config" "$dev"
-    moveToOutput "lib/ImageMagick-*/config-Q16" "$dev" # includes configure params
-    for file in "$dev"/bin/*-config; do
+    for file in "$out"/bin/*-config; do
       substituteInPlace "$file" --replace "${pkgconfig}/bin/pkg-config -config" \
         ${pkgconfig}/bin/pkg-config
       substituteInPlace "$file" --replace ${pkgconfig}/bin/pkg-config \
-        "PKG_CONFIG_PATH='$dev/lib/pkgconfig' '${pkgconfig}/bin/pkg-config'"
+        "PKG_CONFIG_PATH='$out/lib/pkgconfig' '${pkgconfig}/bin/pkg-config'"
     done
   '' + lib.optionalString (ghostscript != null) ''
     for la in $out/lib/*.la; do
