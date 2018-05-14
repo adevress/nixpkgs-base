@@ -14,8 +14,8 @@ let
     else throw "ImageMagick is not supported on this platform.";
 
   cfg = {
-    version = "7.0.7-29";
-    sha256 = "0jfpfydz50zxs776knz6w2f5g0l4nhivp9g1fz4cf5clgjcpa3z6";
+    version = "6.9.9-41";
+    sha256 = "1z1bxzagjw8ac7x813hdkp3969344nm1nlc6pixq2fqynq4chs63";
     patches = [];
   }
     # Freeze version on mingw so we don't need to port the patch too often.
@@ -38,7 +38,7 @@ stdenv.mkDerivation rec {
 
   src = fetchFromGitHub {
     owner = "ImageMagick";
-    repo = "ImageMagick";
+    repo = "ImageMagick6";
     rev = "${version}";
     inherit (cfg) sha256;
   };
