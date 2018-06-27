@@ -1832,9 +1832,10 @@ in {
   # Needed for bleach 1.5.0
   html5lib_0_9999999 = self.html5lib.overridePythonAttrs rec {
     name = "html5lib-${version}";
-    disabled = isPy3k && pythonAtLeast "3.6";
+#    disabled = isPy3k && pythonAtLeast "3.6";
     buildInputs = with self; [ nose flake8 ];
     propagatedBuildInputs = with self; [ six ];
+    doCheck = !isPy3k;
     checkPhase = ''
       nosetests
     '';

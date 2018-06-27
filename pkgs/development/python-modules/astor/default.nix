@@ -1,13 +1,13 @@
-{ stdenv, buildPythonPackage, fetchPypi }:
+{ stdenv, isPy3k, buildPythonPackage, fetchPypi }:
 
 buildPythonPackage rec {
   pname = "astor";
-  version = "0.5";
+  version = "0.6.2";
   name = "${pname}-${version}";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "1fdafq5hkis1fxqlmhw0sn44zp2ar46nxhbc22cvwg7hsd8z5gsa";
+    sha256 = "0pdp1db2l45m8ff9vk7lag11g32aqn0cqkfc4nqsqd6qc8ljwvgz";
   };
 
   meta = with stdenv.lib; {
@@ -16,4 +16,6 @@ buildPythonPackage rec {
     license = licenses.bsd3;
     maintainers = with maintainers; [ nixy ];
   };
+
+  doCheck = !isPy3k;
 }
