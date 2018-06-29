@@ -71,7 +71,7 @@ in stdenv.mkDerivation (fBuildAttrs // {
   buildPhase = fBuildAttrs.buildPhase or ''
     runHook preBuild
 
-    bazel --output_base="$bazelOut" build -j $NIX_BUILD_CORES $bazelFlags $bazelTarget
+    bazel --output_base="$bazelOut" build -j $NIX_BUILD_CORES $bazelBuildFlags $bazelFlags $bazelTarget
 
     runHook postBuild
   '';
