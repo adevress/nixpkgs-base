@@ -24,7 +24,7 @@ in with lib.systems.doubles; lib.runTests {
   freebsd = assertTrue (mseteq freebsd [ "i686-freebsd" "x86_64-freebsd" ]);
   gnu = assertTrue (mseteq gnu (linux /* ++ hurd ++ kfreebsd ++ ... */));
   illumos = assertTrue (mseteq illumos [ "x86_64-solaris" ]);
-  linux = assertTrue (mseteq linux [ "i686-linux" "x86_64-linux" "armv5tel-linux" "armv6l-linux" "armv7l-linux" "aarch64-linux" "mips64el-linux" ]);
+  linux = assertTrue (mseteq linux [ "i686-linux" "x86_64-linux" "armv5tel-linux" "armv6l-linux" "armv7l-linux" "aarch64-linux" "mips64el-linux" "powerpc64le-linux" ]);
   netbsd = assertTrue (mseteq netbsd [ "i686-netbsd" "x86_64-netbsd" ]);
   openbsd = assertTrue (mseteq openbsd [ "i686-openbsd" "x86_64-openbsd" ]);
   unix = assertTrue (mseteq unix (linux ++ darwin ++ freebsd ++ openbsd ++ netbsd ++ illumos));

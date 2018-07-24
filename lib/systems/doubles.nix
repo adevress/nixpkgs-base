@@ -9,6 +9,8 @@ let
     "aarch64-linux"
     "armv5tel-linux" "armv6l-linux" "armv7l-linux"
 
+    "powerpc64le-linux"
+
     "mips64el-linux"
 
     "i686-cygwin" "i686-freebsd" "i686-linux" "i686-netbsd" "i686-openbsd"
