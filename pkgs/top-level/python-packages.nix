@@ -22602,7 +22602,7 @@ EOF
     };
 
     buildInputs = with self; [ nose ];
-    propagatedBuildInputs = with self; [ decorator ];
+    propagatedBuildInputs = with self; [ decorator setuptools_pymod pydot ];
 
     # 17 failures with 3.6 https://github.com/networkx/networkx/issues/2396#issuecomment-304437299
     doCheck = !(isPy36);
