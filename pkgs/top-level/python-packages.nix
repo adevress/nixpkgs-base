@@ -4450,11 +4450,11 @@ in {
 
   decorator = buildPythonPackage rec {
     name = "decorator-${version}";
-    version = "4.0.11";
+    version = "4.1.0";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/d/decorator/${name}.tar.gz";
-      sha256 = "953d6bf082b100f43229cf547f4f97f97e970f5ad645ee7601d55ff87afdfe76";
+      sha256 = "0fsjxkdpsyp4pfv9yk752j0p7d1yvvb6l87jvn7f64cg9a3fbmjk";
     };
 
     meta = {
@@ -4808,7 +4808,7 @@ in {
   edward = callPackage ../development/python-modules/edward { };
 
   elasticsearch = buildPythonPackage (rec {
-    name = "elasticsearch-1.9.0";
+    name = "elasticsearch-6.2.0";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/e/elasticsearch/${name}.tar.gz";
@@ -22589,7 +22589,7 @@ EOF
   };
 
   networkx = buildPythonPackage rec {
-    version = "1.11";
+    version = "2.1";
     name = "networkx-${version}";
 
     # Currently broken on PyPy.
@@ -22597,8 +22597,8 @@ EOF
     disabled = isPyPy;
 
     src = pkgs.fetchurl {
-      url = "mirror://pypi/n/networkx/${name}.tar.gz";
-      sha256 = "1f74s56xb4ggixiq0vxyfxsfk8p20c7a099lpcf60izv1php03hd";
+      url = "mirror://pypi/n/networkx/${name}.zip";
+      sha256 = "1ccb8mfz4m821k9y0cigkbq42q2sbb4dj5fbjshp0awp32j2q9v4";
     };
 
     buildInputs = with self; [ nose ];
