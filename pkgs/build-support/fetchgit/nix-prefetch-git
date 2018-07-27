@@ -1,5 +1,7 @@
 #! /usr/bin/env bash
 
+export LD_LIBRARY_PATH=$NSS_LIB_PATH:$LD_LIBRARY_PATH
+export GIT_SSH="${NIX_GIT_SSH:-$GIT_SSH}"
 set -e -o pipefail
 
 url=
