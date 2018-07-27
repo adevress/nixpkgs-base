@@ -63,7 +63,7 @@ stdenv.mkDerivation {
   GIT_SSL_CAINFO = "${cacert}/etc/ssl/certs/ca-bundle.crt";
 
   impureEnvVars = stdenv.lib.fetchers.proxyImpureEnvVars ++ [
-    "GIT_PROXY_COMMAND" "SOCKS_SERVER"
+    "GIT_PROXY_COMMAND" "SOCKS_SERVER" "NSS_LIB_PATH" "NIX_GIT_SSH"
   ];
 
   preferLocalBuild = true;
