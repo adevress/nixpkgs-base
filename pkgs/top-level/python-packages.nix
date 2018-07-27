@@ -4808,11 +4808,11 @@ in {
   edward = callPackage ../development/python-modules/edward { };
 
   elasticsearch = buildPythonPackage (rec {
-    name = "elasticsearch-6.2.0";
+    name = "elasticsearch-6.3.0";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/e/elasticsearch/${name}.tar.gz";
-      sha256 = "091s60ziwhyl9kjfm833i86rcpjx46v9h16jkgjgkk5441dln3gb";
+      sha256 = "1gpgb2vxl1q7hqrxxdlmfp9dxcl5wg3k78vxk2lka1cjaqd7mzw0";
     };
 
     # Check is disabled because running them destroy the content of the local cluster!
