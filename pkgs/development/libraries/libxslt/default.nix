@@ -24,7 +24,7 @@ stdenv.mkDerivation rec {
       name = "CVE-2017-5029";
       url = "https://git.gnome.org/browse/libxslt/"
         + "patch/?id=08ab2774b870de1c7b5a48693df75e8154addae5";
-      sha256 = "10azfmyffjf9d7b5js4ipxw9f20qi0kw3zq34bpqmbcpq3l338ky";
+      sha256 = "0mdqa9w1p6cmli6976v4wi0sw9r4p5prkj7lzfd1877wk11c9c73";
     })
   ] ++ stdenv.lib.optional stdenv.isSunOS ./patch-ah.patch;
 
