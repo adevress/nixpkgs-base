@@ -1,5 +1,5 @@
-{ stdenv, fetchurl, python, buildPythonPackage
-, numpy, hdf5, cython, six, pkgconfig
+{ stdenv, fetchurl, isPy27, python, buildPythonPackage
+, numpy, hdf5, cython, six, pkgconfig, unittest2
 , mpi4py ? null }:
 
 assert hdf5.mpiSupport -> mpi4py != null && hdf5.mpi == mpi4py.mpi;
@@ -11,30 +11,32 @@ let
   mpiSupport = hdf5.mpiSupport;
 
 in buildPythonPackage rec {
-  version = "2.7.1";
+  version = "2.8.0";
   pname = "h5py";
   name = "${pname}-${version}";
 
   src = fetchurl {
     url = "mirror://pypi/h/h5py/${name}.tar.gz";
-    sha256 = "180a688311e826ff6ae6d3bda9b5c292b90b28787525ddfcb10a29d5ddcae2cc";
+    sha256 = "0mdr6wrq02ac93m1aqx9kad0ppfzmm4imlxqgyy1x4l7hmdcc9p6";
   };
 
   configure_flags = "--hdf5=${hdf5}" + optionalString mpiSupport " --mpi";
 
   postConfigure = ''
     ${python.executable} setup.py configure ${configure_flags}
+    # Needed to run the tests reliably. See:
+    # https://bitbucket.org/mpi4py/mpi4py/issues/87/multiple-test-errors-with-openmpi-30
+    ${optionalString mpiSupport "export OMPI_MCA_rmaps_base_oversubscribe=yes"}
   '';
 
   preBuild = if mpiSupport then "export CC=${mpi}/bin/mpicc" else "";
 
+  checkInputs = optional isPy27 unittest2;
   nativeBuildInputs = [ pkgconfig ];
   buildInputs = [ hdf5 cython ]
-    ++ optional mpiSupport mpi
-    ;
+    ++ optional mpiSupport mpi;
   propagatedBuildInputs = [ numpy six]
-    ++ optional mpiSupport mpi4py
-    ;
+    ++ optionals mpiSupport [ mpi4py openssh ];
 
   meta = {
     description =
