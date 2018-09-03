@@ -4133,11 +4133,11 @@ in {
   distributed = buildPythonPackage rec {
 
     name = "distributed-${version}";
-    version = "1.15.1";
+    version = "1.16.0";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/d/distributed/${name}.tar.gz";
-      sha256 = "037a07sdf2ch1d360nqwqz3b4ld8msydng7mw4i5s902v7xr05l6";
+      sha256 = "1p6533aphapq2zmv0a1k9x8zrm146vrkjhmmx4jcgj4i7m3159sr";
     };
 
     buildInputs = with self; [ pytest docutils ];

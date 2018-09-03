@@ -28,12 +28,12 @@ let
   inherit (stdenv) isDarwin;
 in buildPythonPackage rec {
   pname = "pandas";
-  version = "0.21.0";
+  version = "0.23.0";
   name = "${pname}-${version}";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "0nf50ls2cnlsd2635nyji7l70xc91dw81qg5y01g5sifwwqcpmaw";
+    sha256 = "1ncg4hzwi416xlm95fm29p4nn88s3gf69w8i89axkchcb581vaw4";
   };
 
   LC_ALL = "en_US.UTF-8";
@@ -68,7 +68,7 @@ in buildPythonPackage rec {
   checkInputs = [ moto ];
 
   # check phase is flacky and
-  # simply fail withotu sandboxing and large machine ... 
+  # simply fail withotu sandboxing and large machine ...
   doCheck = false;
 
   checkPhase = ''
