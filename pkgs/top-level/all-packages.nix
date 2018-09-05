@@ -7126,8 +7126,18 @@ with pkgs;
     inherit (darwin) ps;
   };
 
+  cmake_3_10 = libsForQt5.callPackage ../development/tools/build-managers/cmake {
+    inherit (darwin) ps;
+    majorVersion = "3.10";
+  };
+
+  cmake_3_11 = libsForQt5.callPackage ../development/tools/build-managers/cmake {
+    inherit (darwin) ps;
+  };
+
   cmake = libsForQt5.callPackage ../development/tools/build-managers/cmake {
     inherit (darwin) ps;
+    majorVersion = "3.9";
   };
 
   cmakeCurses = cmake.override { useNcurses = true; };
