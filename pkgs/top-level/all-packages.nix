@@ -1622,7 +1622,8 @@ with pkgs;
     cudatoolkit7
     cudatoolkit75
     cudatoolkit8
-    cudatoolkit9;
+    cudatoolkit9
+    cudatoolkit92;
 
   cudatoolkit = cudatoolkit9;
 
