@@ -173,5 +173,12 @@ in {
     gcc = gcc6;
   };
 
+  cudatoolkit92 = common {
+    version = "9.2.148";
+    url = "https://developer.nvidia.com/compute/cuda/9.2/Prod2/local_installers/cuda_9.2.148_396.37_linux";
+    sha256 = "04c6v9b50l4awsf9w9zj5vnxvmc0hk0ypcfjksbh4vnzrz14wigm";
+    gcc = gcc6;
+  };
+
 }
 
