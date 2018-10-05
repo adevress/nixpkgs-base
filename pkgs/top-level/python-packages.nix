@@ -178,7 +178,15 @@ in {
 
   # packages defined elsewhere
 
+  backports_abc = callPackage ../development/python-modules/backports_abc { };
   backports_csv = callPackage ../development/python-modules/backports_csv {};
+  backports_functools_lru_cache = callPackage ../development/python-modules/backports_functools_lru_cache { };
+  backports_lzma = callPackage ../development/python-modules/backports_lzma { };
+  backports_shutil_get_terminal_size = callPackage ../development/python-modules/backports_shutil_get_terminal_size { };
+  backports_ssl_match_hostname = if !(pythonOlder "3.5") then null else
+      callPackage ../development/python-modules/backports_ssl_match_hostname { };
+  backports_tempfile = callPackage ../development/python-modules/backports_tempfile { };
+  backports_unittest-mock = callPackage ../development/python-modules/backports_unittest-mock {};
 
   bap = callPackage ../development/python-modules/bap {
     bap = pkgs.ocamlPackages_4_02.bap;
@@ -1007,112 +1015,6 @@ in {
       maintainers = with maintainers; [ olcai ];
     };
   };
-
-  backports_abc = buildPythonPackage rec {
-    name = "backports_abc-${version}";
-    version = "0.4";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/b/backports_abc/${name}.tar.gz";
-      sha256 = "8b3e4092ba3d541c7a2f9b7d0d9c0275b21c6a01c53a61c731eba6686939d0a5";
-    };
-
-    checkPhase = ''
-      ${python.interpreter} -m unittest discover
-    '';
-
-    meta = {
-      homepage = https://github.com/cython/backports_abc;
-      license = licenses.psfl;
-      description = "A backport of recent additions to the 'collections.abc' module";
-    };
-  };
-
-  backports_functools_lru_cache = buildPythonPackage rec {
-    name = "backports.functools_lru_cache-${version}";
-    version = "1.3";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/b/backports_functools_lru_cache/${name}.tar.gz";
-      sha256 = "444a21bcec4ae177da554321f81a78dc879eaa8f6ea9920cb904830585d31e95";
-    };
-
-    buildInputs = with self; [ setuptools_scm ];
-    doCheck = false; # No proper test
-
-    meta = {
-      description = "Backport of functools.lru_cache";
-      homepage = https://github.com/jaraco/backports.functools_lru_cache;
-      license = licenses.mit;
-    };
-  };
-
-  backports_shutil_get_terminal_size = if !(pythonOlder "3.3") then null else buildPythonPackage rec {
-    name = "backports.shutil_get_terminal_size-${version}";
-    version = "1.0.0";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/b/backports.shutil_get_terminal_size/${name}.tar.gz";
-      sha256 = "713e7a8228ae80341c70586d1cc0a8caa5207346927e23d09dcbcaf18eadec80";
-    };
-
-    meta = {
-      description = "A backport of the get_terminal_size function from Python 3.3’s shutil.";
-      homepage = https://github.com/chrippa/backports.shutil_get_terminal_size;
-      license = with licenses; [ mit ];
-    };
-  };
-
-  backports_ssl_match_hostname_3_4_0_2 = self.buildPythonPackage rec {
-    name = "backports.ssl_match_hostname-3.4.0.2";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/b/backports.ssl_match_hostname/backports.ssl_match_hostname-3.4.0.2.tar.gz";
-      sha256 = "07410e7fb09aab7bdaf5e618de66c3dac84e2e3d628352814dc4c37de321d6ae";
-    };
-
-    meta = {
-      description = "The Secure Sockets layer is only actually *secure*";
-      homepage = https://bitbucket.org/brandon/backports.ssl_match_hostname;
-    };
-  };
-
-  backports_ssl_match_hostname = self.buildPythonPackage rec {
-    name = "backports.ssl_match_hostname-${version}";
-    version = "3.5.0.1";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/b/backports.ssl_match_hostname/${name}.tar.gz";
-      sha256 = "1wndipik52cyqy0677zdgp90i435pmvwd89cz98lm7ri0y3xjajh";
-    };
-
-    meta = {
-      description = "The Secure Sockets layer is only actually *secure*";
-      homepage = https://bitbucket.org/brandon/backports.ssl_match_hostname;
-    };
-  };
-
-  backports_lzma = self.buildPythonPackage rec {
-    name = "backports.lzma-0.0.3";
-    disabled = isPy3k;
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/b/backports.lzma/${name}.tar.gz";
-      sha256 = "bac58aec8d39ac3d22250840fb24830d0e4a0ef05ad8f3f09172dc0cc80cdbca";
-    };
-
-    buildInputs = [ pkgs.lzma ];
-
-    meta = {
-      describe = "Backport of Python 3.3's 'lzma' module for XZ/LZMA compressed files";
-      homepage = https://github.com/peterjc/backports.lzma;
-      license = licenses.bsd3;
-    };
-  };
-
-  backports_tempfile = callPackage ../development/python-modules/backports_tempfile { };
-
-  backports_unittest-mock = callPackage ../development/python-modules/backports_unittest-mock {};
 
   babelfish = buildPythonPackage rec {
     version = "0.5.5";
