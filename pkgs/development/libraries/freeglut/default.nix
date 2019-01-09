@@ -9,7 +9,7 @@ in stdenv.mkDerivation {
     sha256 = "18knkyczzwbmyg8hr4zh8a1i5ga01np2jzd1rwmsh7mh2n2vwhra";
   };
 
-  outputs = [ "out" "dev" ];
+  outputs = [ "out" "dev" "headers" ];
 
   buildInputs = [ libXi libXrandr libXxf86vm mesa_noglu mesa_glu xlibsWrapper cmake ];
 
