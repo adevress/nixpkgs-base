@@ -23,7 +23,7 @@ stdenv.mkDerivation rec {
   ];
 
   cmakeFlags = [
-    "-DUSE_PYTHON=OFF"
+    "-DUSE_PYTHON=OFF" "-DJPEG_LIBRARY=${libjpeg}/lib"
   ];
 
   preBuild = ''

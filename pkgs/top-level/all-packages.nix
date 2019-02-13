@@ -16125,7 +16125,9 @@ with pkgs;
 
   openfx = callPackage ../development/libraries/openfx {};
 
-  openimageio = callPackage ../applications/graphics/openimageio { };
+  openimageio = callPackage ../applications/graphics/openimageio {
+    libjpeg = libjpeg_turbo.out;
+  };
 
   openjump = callPackage ../applications/misc/openjump { };
 
